@@ -5,16 +5,13 @@ def is_palindrome(s):
 
 num_words = {'0': 'ноль', '1': 'один', '2': 'два', '3': 'три'}
 
-
-pattern = re.compile(r'\b([0123]+1[13])\b')
+pattern = re.compile(r'\b(1[13]|[0123]{1,3}1[13])\b')
 
 with open("2L.txt", encoding="utf-8") as f:
     data = f.read()
 
 for n in pattern.findall(data):
-    dec = int(n, 4)
-    if dec <= 1023 and dec % 2 == 1:
-        if is_palindrome(n):
-            print(" ".join(num_words[c] for c in n))
-        else:
-            print(n[::-1])
+    if is_palindrome(n):
+        print(" ".join(num_words[c] for c in n))
+    else:
+        print(n[::-1])
