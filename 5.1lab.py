@@ -19,30 +19,43 @@ def generate_constrained(n):
     return [x for x in range(1, n + 1) if x % 3 == 0 and 2 <= count_even_digits(x) <= 3]
 
 def find_optimal(xs):
-    sums = [(x, sum(int(d) for d in str(x))) for x in xs]
-    if not sums:
+    if not xs:
         return [], 0
+    sums = [(x, sum(int(d) for d in str(x))) for x in xs]
     max_sum = max(s for _, s in sums)
-    return [x for x, s in sums if s == max_sum], max_sum
+    optimal = [x for x, s in sums if s == max_sum]
+    return sorted(optimal), max_sum  
 
 def main():
     n = 1000
+    print(f"Анализируем числа от 1 до {n}\n" + "="*50)
 
     algo_list = generate_algo(n)
     py_list = generate_python(n)
-    print(f"n = {n} (считаем от 1 до этого числа)")
-    print("\nАлгоритмический метод — первые 10 чисел:", algo_list[:10])
-    print("Product метод — первые 10 чисел:", py_list[:10])
-    print("\nВсего чисел:", len(py_list))
+    cons_list = generate_constrained(n)
 
+    print(f"Найдено чисел с 2–3 чётными цифрами: {len(py_list)} шт.\n")
+    print("ВСЕ такие числа:")
+    print(py_list)
+    print("\n" + "-"*50)
+
+    print(f"\nИз них кратны 3: {len(cons_list)} шт.")
+    print("Числа, кратные 3 и с 2–3 чётными цифрами:")
+    print(cons_list)
+
+    optimal, max_sum = find_optimal(cons_list)
+    print(f"\n\nОптимальные числа (максимальная сумма цифр среди кратных 3):")
+    print(f"Сумма цифр = {max_sum}")
+    print(f"Таких чисел: {len(optimal)}")
+    print("Список:", optimal)
+
+    print("\n" + "="*50)
+    print("Сравнение скорости (100 запусков):")
     t1 = timeit.timeit(lambda: generate_algo(n), number=100)
     t2 = timeit.timeit(lambda: generate_python(n), number=100)
-    print(f"\nВремя (100 повторов): алгоритмический = {t1:.4f}s, python = {t2:.4f}s")
-
-    cons = generate_constrained(n)
-    optimal, max_sum = find_optimal(cons)
-    print("\nЧисла, кратные 3 (ограничение) и с 2–3 четными цифрами — всего:", len(cons))
-    print(f"\nОптимальные числа (максимальная сумма цифр = {max_sum}): {optimal}")
+    print(f"Алгоритмический подход: {t1:.4f} сек")
+    print(f"Списковое включение (Pythonic): {t2:.4f} сек")
+    print(f"→ {'Списковое включение' if t2 < t1 else 'Цикл'} быстрее в {abs(t1/t2 - 1)*100:.1f}% случаев")
 
 if __name__ == "__main__":
     main()
